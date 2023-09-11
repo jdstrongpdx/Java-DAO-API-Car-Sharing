@@ -23,7 +23,7 @@ import java.util.Scanner;
  *  This is the 'Graduate Project' for the Hyperskill Java Backend Developer Certificate.  I had implemented much of
  *  this program using a basic methodology when I ran into a template for DAO and JDBC.  I decided it would be a much
  *  better learning experience to implement the DAO model and started over from scratch - developing the solution in
- *  two days (10 hours).  It was a fun project, but both the simplicity and lack of functionality of the end program
+ *  two days.  It was a fun project, but both the simplicity and lack of functionality of the end program
  *  leave something to be desired, but does not warrant further development.  After avoiding COVID for years, my son
  *  brought the latest strain home after his first week back at school.  This was my 'quarantine' project - partly to
  *  distract from the pain and 102 fever.  Good times.
@@ -507,6 +507,10 @@ public class Main {
             return found;
         }
 
+        /**
+         * Update the rented_car_id of given a specific customer
+         * @param developer - Developer object containing the new name and current id of the car to update
+         */
         @Override
         public void update(Developer developer) {
             if (developer.getParent() == 0) {
@@ -516,6 +520,10 @@ public class Main {
             }
             }
 
+        /**
+         * Delete a customer by its id number
+         * @param id - integer id number of the customer id
+         */
         @Override
         public void deleteById(int id) {
             dbClient.run(String.format(DELETE_DATA, id));
@@ -581,7 +589,6 @@ public class Main {
         /**
          * Find any cars by a given company matching
          * @param parentId -
-         * @return
          */
         @Override
         public List<Developer> findByParentId(int parentId) {
@@ -601,10 +608,17 @@ public class Main {
             return found;
         }
 
+        /**
+         * Update the rented_car_id of given a specific customer
+         * @param developer - Developer object containing the new name and current id of the car to update
+         */
         @Override
         public void update(Developer developer) {
             dbClient.run(String.format(UPDATE_DATA, developer.getName(), developer.getParent(), developer.getId()));}
 
+        /**
+         * UNUSED - USE CustomerDao CLASS TO DELETE CUSTOMER RECORDS
+         */
         @Override
         public void deleteById(int id) {
             dbClient.run(String.format(DELETE_DATA, id));
@@ -614,7 +628,7 @@ public class Main {
     //-----------------------------------------------------------------------------------------------------------------
 
     /**
-     *
+     * Create the database connection and store dataSource connection in static variable for use elsewhere
      */
     class getDbClient {
 
@@ -643,7 +657,7 @@ public class Main {
 
     //-----------------------------------------------------------------------------------------------------------------
 
-    /**  TODO - CREATE JAVA DOC
+    /**  Main function for running program (singleton instantiation)
      *
      */
     public static void main(String[] args) {
@@ -651,6 +665,10 @@ public class Main {
         prog.run(args);
     }
 
+    /**
+     * Create DbClient, DAO objects and run main menu
+     * @param args - sys args for getting db filename (if present in args)
+     */
     void run (String[] args) {
         new getDbClient(args);
         companyDao = new CompanyDao();
@@ -660,6 +678,9 @@ public class Main {
         menuMain();
     }
 
+    /**
+     * Tiered menu system that exits only on user input = 0
+     */
     void menuMain () {
         int option = -1;
         while (option != 0) {
@@ -681,6 +702,9 @@ public class Main {
         }
     }
 
+    /**
+     * Company menu options - list/create companies
+     */
     void companyMenu() {
         int action = -1;
         while (action != 0) {
@@ -701,6 +725,9 @@ public class Main {
         }
     }
 
+    /**
+     * Car menu options - list/create cars linked to a company
+     */
     void carMenu() {
         List<Developer> companies = companyDao.findAll();
         if (companies.isEmpty()) {return;}
@@ -729,6 +756,9 @@ public class Main {
         }
     }
 
+    /**
+     * Customer menu options - rent/return/list cars from specific companies
+     */
     void customerMenu() {
         List<Developer> customerList = customerDao.findAll();
         if (customerList.isEmpty()) {return;}
@@ -771,6 +801,10 @@ public class Main {
         }
     }
 
+    /**
+     * Rent-a-car menu - to rent a car from a specific company listing only un-rented cars
+     * @param customerId
+     */
     void rentAcar(int customerId) {
         Developer customer = customerDao.findById(customerId);
         if (customer.getParent() == 0) {
